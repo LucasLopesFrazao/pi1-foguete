@@ -1,5 +1,5 @@
 import { BsRocketTakeoffFill } from "react-icons/bs";
-import Button from "../buttons";
+import Button from "../../components/buttons";
 
 export default function TelaInicial() {
   return (
