@@ -16,7 +16,7 @@ export default function Table<T = unknown>({ columns, data, className }: Props<T
   return (
     <div className={classNames('overflow-auto', className)}>
       <table className={classNames('table-auto w-full')}>
-        <thead className="bg-gray-100 border-t border-l border-r">
+        <thead className="bg-gray-400 border-t border-l border-r">
           <tr>
             {columns.map((column) => (
               <th key={column.key} className={classNames('px-4 py-3 text-black', column.titleClassName)}>
@@ -26,7 +26,7 @@ export default function Table<T = unknown>({ columns, data, className }: Props<T
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className='bg-gray-200'>
           {
             data.length === 0 && (
               <tr>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Input } from "../components/uikit";
+import { Button, Header, Input } from "../../components/uikit";
 import axios from "axios";
+import { useQuery, useQueryClient } from "react-query";
 
 import { toast } from "react-toastify";
 import ListSensor from "./listSensor";
@@ -15,34 +16,20 @@ export default function Inicial() {
     value: "",
   });
 
-  const [data, setData] = useState([{
-    id: "",
-    name: "",
-    function: "",
-    value: "",
-  }]);
-
-  useEffect(() => {
-    fetchSensors();
-  }, []);
-
-  const fetchSensors = async () => {
-  const urlSensor = `https://pi1-foguete-backend.vercel.app/sensor`;
-
-    try {
-      const response = await axios.get(urlSensor);
-      setData(response.data);
-    } catch (error) {
-      toast.error("Erro ao buscar sensores.");
-    }
-  };
+  const queryClient = useQueryClient();
+  
+  let { data, refetch } = useQuery({
+    queryKey: ["sensor"],
+    staleTime: 300, // Refetch every 5 minutes
+    queryFn: () => axios.get(`https://pi1-foguete-backend.vercel.app/sensor`).then((res) => res.data),
+  });
 
   const handleSendSensor = async () => {
     if (!sensor.id) {
       const urlPostSensor = `https://pi1-foguete-backend.vercel.app/sensor`;
 
       try {
-        axios.post(urlPostSensor, {
+        await axios.post(urlPostSensor, {
           name: sensor.name,
           function: sensor.function,
           value: sensor.value,
@@ -54,7 +41,7 @@ export default function Inicial() {
     } else {
       const urlPutSensor = `https://pi1-foguete-backend.vercel.app/sensor/${sensor.id}`;
       try {
-        axios.put(urlPutSensor, {
+        await axios.put(urlPutSensor, {
           name: sensor.name,
           function: sensor.function,
           value: sensor.value,
@@ -66,23 +53,21 @@ export default function Inicial() {
     }
 
     resetSensor();
-    await fetchSensors();
-    await fetchSensors();
+    await refetch()
   };
 
   const handleDeleteSensor = async (sensorId: string) => {
     const urlDeleteSensor = `https://pi1-foguete-backend.vercel.app/sensor/${sensorId}`;
 
     try {
-      axios.delete(urlDeleteSensor);
+      await axios.delete(urlDeleteSensor);
       toast.success("Sensor deletado com sucesso.");
     } catch (e) {
       toast.error("Erro ao deletar sensor.");
     }
 
     resetSensor();
-    await fetchSensors();
-    await fetchSensors();
+    await refetch()
   };
 
   const resetSensor = () => {
@@ -95,10 +80,12 @@ export default function Inicial() {
   };
 
   return (
-    <div className="min-h-screen justify-center bg-gray-100 p-4">
-      <h1 className="text-black">Sensor</h1>
-      <div className="flex items-center justify-center bg-gray-200 p-4">
-        <div className="w-1/2 h-full">
+    <div className="bg-gray-300 flex flex-col gap-2">
+      <Header size={5} className="text-black self-center">
+        Gerenciamento De Sensores
+      </Header>
+      <div>
+        <div>
           <Input
             label="ID"
             value={sensor.id}
@@ -126,30 +113,33 @@ export default function Inicial() {
               setSensor((prev) => ({ ...prev, value: e.target.value }))
             }
           />
-          <Button
-            variant="primary"
-            className="mt-2 mr-2"
-            onClick={handleSendSensor}
-          >
-            {sensor.id ? "Editar" : "Cadastrar"}
-          </Button>
-          <Button
-            variant="primary"
-            className="mt-2"
-            onClick={() =>
-              setSensor({
-                id: "",
-                name: "",
-                function: "",
-                value: "",
-              })
-            }
-          >
-            Limpar
-          </Button>
+          <div className="flex justify-around">
+            <Button variant="primary" onClick={handleSendSensor}>
+              {sensor.id ? "Editar" : "Cadastrar"}
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() =>
+                setSensor({
+                  id: "",
+                  name: "",
+                  function: "",
+                  value: "",
+                })
+              }
+            >
+              Limpar
+            </Button>
+          </div>
         </div>
       </div>
-      <ListSensor setSensor={setSensor} onDelete={handleDeleteSensor} data={data}/>
+      <div>
+        <ListSensor
+          setSensor={setSensor}
+          onDelete={handleDeleteSensor}
+          data={data}
+        />
+      </div>
     </div>
   );
 }

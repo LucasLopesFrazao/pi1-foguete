@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Input, Table } from "../components/uikit";
+import { Button, Input, Table } from "../../components/uikit";
 import axios from "axios";
 
 
@@ -25,19 +25,19 @@ export default function ListSensor({setSensor, data, onDelete}: Props) {
           },
           {
             key: "desc",
-            title: "descricao",
+            title: "Descrição",
             render: (sensor: any) => sensor.function,
           },
           {
             key: "price",
-            title: "Preço (R$)",
+            title: "Preço",
             render: (sensor: any) => sensor.value,
           },
           {
             key: "actions",
             title: "Ações",
             render: (sensor: any) => (
-              <div className="flex justify-around">
+              <div className="flex gap-2">
                 <Button variant="primary" onClick={()=>setSensor(sensor)}>Editar</Button>
                 <Button variant="primary" onClick={()=>onDelete(sensor.id)}>Excluir</Button>
               </div>
