@@ -13,6 +13,7 @@ module.exports = withMT({
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
         'gradient-radial-foguete': 'radial-gradient(circle at 3% 100%, rgba(16,11,31,1) 0%, rgba(26,101,112,0.84) 50%, rgba(0,0,0,1) 100%)',
+        'gradient-radial-tela-inicial': 'radial-gradient(circle at 3% 100%, rgba(16,11,31,1) 0%, rgba(112,26,70,0.84) 50%, rgba(0,0,0,1) 100%)'
       },
       colors: {
         'color1Foguete': '#100B1F',
