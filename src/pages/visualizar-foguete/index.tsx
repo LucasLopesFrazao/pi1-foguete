@@ -10,7 +10,6 @@ import {
   BsPencilFill,
 } from "react-icons/bs";
 
-
 function VisualizarFoguete() {
   //  const [list, setList] = useState<IFoguete[]>([]);
 
@@ -71,7 +70,6 @@ function VisualizarFoguete() {
   }, []); */
 
   return (
-
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div
         className=" w-full max-w-xs flex flex-col items-center justify-center space-y-8
@@ -85,22 +83,20 @@ function VisualizarFoguete() {
         </div>
         <title>Foguetes</title>
         <h2 style={{ color: "#E8E8E8" }}> Foguete </h2>
-        <ul>
+        <ul className="w-full space-y-4">
           {list.map((listItem, index) => (
-            <li key={index}>
-              <h3> {listItem.nome} </h3>
-              <span>
-                {" "}
-                Material: {listItem.material}
-                </span>  
-                <BsFillTrashFill style={{ color: "#E8E8E8" }}  />
+            <li key={index} className="flex w-full ">
+              <div className=" flex flex-row w-11/12 "> {listItem.nome}</div>
+              <div className=" flex flex-row justify-end items-center gap-3 ">
+                <BsFillTrashFill style={{ color: "#E8E8E8" }} />
                 <BsPencilFill style={{ color: "#E8E8E8" }} />
-              
+              </div>
+              {/* <span> Material: {listItem.material}</span> */}
             </li>
           ))}
         </ul>
         <div className="w-full">
-          <Button texto={"Adicionar foguete"}/>
+          <Button texto={"Adicionar foguete"} />
         </div>
       </div>
     </div>

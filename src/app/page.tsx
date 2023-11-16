@@ -5,7 +5,7 @@ import VisualizarFoguete from "@/pages/visualizar-foguete";
 
 export default function Home() {
   return (
-    <Login />
+    <VisualizarFoguete />
   );
     
 }
