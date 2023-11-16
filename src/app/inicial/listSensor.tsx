@@ -4,57 +4,42 @@ import { useEffect, useState } from "react";
 import { Button, Input, Table } from "../components/uikit";
 import axios from "axios";
 
-import { toast } from "react-toastify";
 
-export default function ListSensor() {
-  const urlSensor = `https://pi1-foguete-backend.vercel.app/sensor`;
 
-  const [sensor, setSensor] = useState([
-    {
-      name: "",
-      function: "",
-      value: "",
-    },
-  ]);
+type Props = {
+  setSensor: any;
+  onDelete: (id: string) => void;
+  data: any;
+}
 
-  useEffect(() => {
-    const fetchSensor = async () => {
-      const response = await axios.get(urlSensor);
-      console.log(response);
-      setSensor(response.data);
-      toast.success("Sensor cadastrado com sucesso.");
-    };
-
-    fetchSensor().catch(console.error);
-  }, []);
-
+export default function ListSensor({setSensor, data, onDelete}: Props) {
   return (
     <>
       <Table
-        data={sensor || []}
+        data={data || []}
         columns={[
           {
             key: "name",
             title: "Nome",
-            render: (sensor) => sensor.name,
+            render: (sensor: any) => sensor.name,
           },
           {
             key: "desc",
             title: "descricao",
-            render: (sensor) => sensor.function,
+            render: (sensor: any) => sensor.function,
           },
           {
             key: "price",
             title: "Preço (R$)",
-            render: (sensor) => sensor.value,
+            render: (sensor: any) => sensor.value,
           },
           {
             key: "actions",
             title: "Ações",
-            render: (dcp) => (
+            render: (sensor: any) => (
               <div className="flex justify-around">
-                <Button variant="primary">Editar</Button>
-                <Button variant="primary">Excluir</Button>
+                <Button variant="primary" onClick={()=>setSensor(sensor)}>Editar</Button>
+                <Button variant="primary" onClick={()=>onDelete(sensor.id)}>Excluir</Button>
               </div>
             ),
           },

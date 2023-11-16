@@ -30,7 +30,7 @@ export default function Table<T = unknown>({ columns, data, className }: Props<T
           {
             data.length === 0 && (
               <tr>
-                <td className="border border-gray-200 px-4 py-3 font-medium text-center" colSpan={columns.length}>
+                <td className="border border-gray-200 px-4 py-3 font-medium text-center text-black" colSpan={columns.length}>
                   Nenhum registro encontrado
                 </td>
               </tr>
