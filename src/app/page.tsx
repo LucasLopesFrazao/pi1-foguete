@@ -25,10 +25,9 @@ export default function Home() {
 
   const signIn = (e: any) => {
     e.preventDefault();
-    console.log(login);
     signInWithEmailAndPassword(auth, login.email, login.senha)
       .then((response) => {
-        router.replace("/inicial");
+        router.replace("/sensor");
       })
       .catch((error) => {
         console.log(error)
