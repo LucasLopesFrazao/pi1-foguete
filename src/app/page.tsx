@@ -27,7 +27,7 @@ export default function Home() {
     e.preventDefault();
     signInWithEmailAndPassword(auth, login.email, login.senha)
       .then((response) => {
-        router.replace("/sensor");
+        router.replace("/home");
       })
       .catch((error) => {
         console.log(error)

@@ -1,10 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Button, Input, Table } from "../../components/uikit";
-import axios from "axios";
-
-
+import { Button, Table } from "../../components/uikit";
 
 type Props = {
   setSensor: any;

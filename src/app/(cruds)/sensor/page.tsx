@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, Header, Input } from "../../components/uikit";
 import axios from "axios";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 
 import { toast } from "react-toastify";
 import ListSensor from "./listSensor";
@@ -16,8 +16,6 @@ export default function Inicial() {
     value: "",
   });
 
-  const queryClient = useQueryClient();
-  
   let { data, refetch } = useQuery({
     queryKey: ["sensor"],
     staleTime: 300, // Refetch every 5 minutes
