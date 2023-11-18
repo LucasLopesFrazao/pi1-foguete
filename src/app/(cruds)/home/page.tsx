@@ -47,7 +47,7 @@ const CategoryCard = ({ icon, title, description }: any) => {
   return (
     <span
       onClick={navigate}
-      className="cursor-pointer transition-all duration-1000 bg-white hover:bg-blue-500 hover:shadow-xl m-2 p-4 relative z-40 group"
+      className="cursor-pointer transition-all duration-1000 bg-white hover:bg-blue-500 hover:shadow-xl m-2 p-4 relative group"
     >
       <div className="absolute bg-blue-500/50 top-0 left-0 w-24 h-1 z-30 transition-all duration-200 group-hover:bg-white group-hover:w-1/2"></div>
       <div className="py-2 px-9 relative flex flex-col items-center">
