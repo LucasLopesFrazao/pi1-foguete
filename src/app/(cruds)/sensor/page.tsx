@@ -8,7 +8,7 @@ import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 import ListSensor from "./listSensor";
 
-export default function Inicial() {
+export default function Sensor() {
   const [sensor, setSensor] = useState({
     id: "",
     name: "",
