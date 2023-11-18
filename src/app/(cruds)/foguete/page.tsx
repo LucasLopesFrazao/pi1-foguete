@@ -18,8 +18,6 @@ export default function Foguete() {
     sensors: [],
   });
 
-  console.log(rocket)
-
   let {
     data: dataRocket,
     refetch: refetchRocket,
