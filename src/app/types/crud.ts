@@ -11,3 +11,17 @@ export type Sensor = {
   name: string;
   value: string;
 };
+
+export type Launch = {
+  id: string;
+  name: string;
+  waterVolume: string;
+  distance: string;
+  weight: string;
+  speed: string;
+  pressure: string;
+  angle: string;
+  height: string;
+  instantAcceleration: string;
+  rockets: string[];
+}
