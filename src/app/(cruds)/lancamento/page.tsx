@@ -21,7 +21,7 @@ export default function Lancamento() {
     angle: "",
     height: "",
     instantAcceleration: "",
-    rockets: [],
+    rocketId: "",
   });
 
   let {
@@ -52,7 +52,6 @@ export default function Lancamento() {
 
       try {
         await axios.post(urlPostLaunch, {
-          id: launch.id,
           name: launch.name,
           waterVolume: launch.waterVolume,
           distance: launch.distance,
@@ -62,7 +61,7 @@ export default function Lancamento() {
           angle: launch.angle,
           height: launch.height,
           instantAcceleration: launch.instantAcceleration,
-          rocketsIds: launch.rockets,
+          rocketId: launch.rocketId,
         });
         toast.success("Lançamento cadastrado com sucesso.");
       } catch (e) {
@@ -72,7 +71,6 @@ export default function Lancamento() {
       const urlPutLaunch = `https://pi1-foguete-backend.vercel.app/launch/${launch.id}`;
       try {
         await axios.put(urlPutLaunch, {
-          id: launch.id,
           name: launch.name,
           waterVolume: launch.waterVolume,
           distance: launch.distance,
@@ -82,7 +80,7 @@ export default function Lancamento() {
           angle: launch.angle,
           height: launch.height,
           instantAcceleration: launch.instantAcceleration,
-          rocketsIds: launch.rockets,
+          rocketId: launch.rocketId,
         });
         toast.success("Lançamento editado com sucesso.");
       } catch (e) {
@@ -120,13 +118,13 @@ export default function Lancamento() {
       angle: "",
       height: "",
       instantAcceleration: "",
-      rockets: [],
+      rocketId: "",
     });
   };
 
   return (
-    <div className=" bg-gray-300 ">
-      <Header size={2} className="text-black w-full flex justify-center mb-16">
+    <div className=" bg-gray-300 flex flex-col gap-2">
+      <Header size={5} className="text-black self-center">
         Gerenciamento De Lançamento
       </Header>
       <div className="min-w-full flex flex-row justify-center gap-16">
@@ -211,7 +209,6 @@ export default function Lancamento() {
       <div className=" w-full flex flex-col justify-center items-center ">
         <div className="  w-2/3 mb-4">
           <Select
-            multiple
             label="Foguetes"
             options={
               dataRocket?.map((rocket: any) => ({
@@ -219,9 +216,9 @@ export default function Lancamento() {
                 label: rocket.name,
               })) ?? []
             }
-            value={launch.rockets || []}
-            onChange={(rockets) =>
-              setLaunch({ ...(launch as Launch), rockets })
+            value={launch.rocketId || ""}
+            onChange={(rocketId) =>
+              setLaunch({ ...(launch as Launch), rocketId })
             }
           />
         </div>

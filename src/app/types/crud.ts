@@ -23,5 +23,5 @@ export type Launch = {
   angle: string;
   height: string;
   instantAcceleration: string;
-  rockets: string[];
+  rocketId: string;
 }

@@ -19,15 +19,20 @@ export default function BottomNavBar() {
   );
 
   return (
-    <div className="flex items-center justify-center p-2">
-      <div className="px-7 bg-white shadow-lg rounded-2xl">
-        <div className="flex">
-          <NavItem icon={<MdDashboard />} title="Dashboard" />
-          <NavItem
-            icon={<FaCog />}
-            title="CRUD's"
-            onClick={() => router.push("/home")}
-          />
+    <div className="fixed inset-x-0 bottom-0 ">
+      <div className="flex justify-center">
+        <div
+          className="px-7 shadow-lg rounded-2xl bg-white"
+          style={{ maxWidth: "fit-content" }}
+        >
+          <div className="flex">
+            <NavItem icon={<MdDashboard />} title="Dashboard" />
+            <NavItem
+              icon={<FaCog />}
+              title="CRUD's"
+              onClick={() => router.push("/home")}
+            />
+          </div>
         </div>
       </div>
     </div>
