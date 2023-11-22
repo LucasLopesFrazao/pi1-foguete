@@ -17,8 +17,8 @@ export default function ListLaunch({
   onDelete,
 }: Props) {
   const rocketFiltered = data.map((launch: Launch) => {
-    if (Array.isArray(launch.rockets)) {
-      const linkedRockets = launch.rockets
+    if (Array.isArray(launch.rocketId)) {
+      const linkedRockets = launch.rocketId
         .map((rocketId) =>
           rockets.find((rocket: Rocket) => rocket.id === rocketId)
         )
