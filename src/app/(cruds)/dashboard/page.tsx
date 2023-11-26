@@ -40,11 +40,11 @@ function Dashboard() {
           Distância e volume de água
         </Header>
         <BarChart
-          width={500}
-          height={300}
+          width={450}
+          height={250}
           data={dataLaunch}
           margin={{
-            right: 50,
+            right: 30,
             left: 30,
           }}
         >
@@ -61,12 +61,12 @@ function Dashboard() {
           Altura e pressão
         </Header>
         <AreaChart
-          width={500}
-          height={300}
-          data={dataLaunch}
           stackOffset="expand"
+          width={450}
+          height={250}
+          data={dataLaunch}
           margin={{
-            right: 50,
+            right: 30,
             left: 30,
           }}
         >
@@ -94,11 +94,11 @@ function Dashboard() {
           Velocidade e aceleração instantânea
         </Header>
         <LineChart
-          width={500}
-          height={300}
+          width={450}
+          height={250}
           data={dataLaunch}
           margin={{
-            right: 50,
+            right: 30,
             left: 30,
           }}
         >
