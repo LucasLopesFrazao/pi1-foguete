@@ -41,6 +41,11 @@ export default function Foguete() {
   });
 
   const handleSendRocket = async () => {
+    if (!rocket.name || !rocket.material || rocket.sensors.length === 0) {
+      toast.error("Todos os campos devem ser preenchidos.");
+      return;
+    }
+
     if (!rocket.id) {
       const urlPostRocket = `https://pi1-foguete-backend.vercel.app/rocket`;
 
@@ -102,12 +107,6 @@ export default function Foguete() {
       </Header>
       <div>
         <div>
-          <Input
-            label="ID"
-            value={rocket.id}
-            disabled={true}
-            className="text-gray-300"
-          />
           <Input
             label="Nome"
             value={rocket.name}

@@ -37,9 +37,9 @@ export default function ListLaunch({
       data={rocketFiltered || []}
       columns={[
         {
-          key: "name",
-          title: "Nome",
-          render: (launch: any) => launch.name,
+          key: "date",
+          title: "Data",
+          render: (launch: any) => launch.date,
         },
         {
           key: "waterVolume",

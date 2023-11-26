@@ -26,7 +26,11 @@ export default function BottomNavBar() {
           style={{ maxWidth: "fit-content" }}
         >
           <div className="flex">
-            <NavItem icon={<MdDashboard />} title="Dashboard" />
+            <NavItem
+              icon={<MdDashboard />}
+              title="Dashboard"
+              onClick={() => router.push("/dashboard")}
+            />
             <NavItem
               icon={<FaCog />}
               title="CRUD's"

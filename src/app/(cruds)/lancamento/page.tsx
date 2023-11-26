@@ -9,16 +9,17 @@ import { toast } from "react-toastify";
 import ListLaunch from "./listLaunch";
 import { Launch } from "@/app/types/crud";
 
+import { formatDate } from "@/app/utils/functions";
+
 export default function Lancamento() {
   const [launch, setLaunch] = useState<Launch>({
     id: "",
-    name: "",
+    date: "",
     waterVolume: "",
     distance: "",
     weight: "",
     speed: "",
     pressure: "",
-    angle: "",
     height: "",
     instantAcceleration: "",
     rocketId: "",
@@ -47,18 +48,31 @@ export default function Lancamento() {
   });
 
   const handleSendLaunch = async () => {
+    if (
+      !launch.waterVolume ||
+      !launch.distance ||
+      !launch.height ||
+      !launch.speed ||
+      !launch.pressure ||
+      !launch.instantAcceleration ||
+      !launch.rocketId
+    ) {
+      toast.error("Todos os campos devem ser preenchidos.");
+      return;
+    }
+
     if (!launch.id) {
       const urlPostLaunch = `https://pi1-foguete-backend.vercel.app/launch`;
 
       try {
         await axios.post(urlPostLaunch, {
-          name: launch.name,
+          date: formatDate(),
           waterVolume: launch.waterVolume,
           distance: launch.distance,
-          weight: launch.weight,
+          weight: 750 + Number(launch.waterVolume),
           speed: launch.speed,
           pressure: launch.pressure,
-          angle: launch.angle,
+          angle: 45,
           height: launch.height,
           instantAcceleration: launch.instantAcceleration,
           rocketId: launch.rocketId,
@@ -71,13 +85,12 @@ export default function Lancamento() {
       const urlPutLaunch = `https://pi1-foguete-backend.vercel.app/launch/${launch.id}`;
       try {
         await axios.put(urlPutLaunch, {
-          name: launch.name,
           waterVolume: launch.waterVolume,
           distance: launch.distance,
-          weight: launch.weight,
+          weight: 750 + Number(launch.waterVolume),
           speed: launch.speed,
           pressure: launch.pressure,
-          angle: launch.angle,
+          angle: 45,
           height: launch.height,
           instantAcceleration: launch.instantAcceleration,
           rocketId: launch.rocketId,
@@ -109,13 +122,12 @@ export default function Lancamento() {
   const resetLaunch = () => {
     setLaunch({
       id: "",
-      name: "",
+      date: "",
       waterVolume: "",
       distance: "",
       weight: "",
       speed: "",
       pressure: "",
-      angle: "",
       height: "",
       instantAcceleration: "",
       rocketId: "",
@@ -130,72 +142,124 @@ export default function Lancamento() {
       <div className="min-w-full flex flex-row justify-center gap-16">
         <div className="w-2/5 flex flex-col ">
           <Input
-            label="ID"
-            value={launch.id}
-            disabled={true}
-            placeholder="Gerado automaticamente..."
-            className="text-gray-300"
-          />
-          <Input
-            label="Nome"
-            value={launch.name}
-            onChange={(e) =>
-              setLaunch((prev) => ({ ...prev, name: e.target.value }))
-            }
-          />
-          <Input
-            label="Volume de água"
+            id="vol"
+            label="Volume de água (ML)"
             value={launch.waterVolume}
             onChange={(e) =>
               setLaunch((prev) => ({ ...prev, waterVolume: e.target.value }))
             }
+            validation={{
+              fn: (value) => {
+                // Verifica se o valor está no formato de número inteiro ou decimal
+                if (!/^\d+(\.\d+)?$/.test(value)) {
+                  setLaunch((prev) => ({ ...prev, waterVolume: "" }));
+
+                  return {
+                    message: "Informe um valor válido.",
+                  };
+                }
+
+                return null;
+              },
+              on: "blur",
+            }}
           />
           <Input
-            label="Distância"
+            id="dist"
+            label="Distância (Metros)"
             value={launch.distance}
             onChange={(e) =>
               setLaunch((prev) => ({ ...prev, distance: e.target.value }))
             }
+            validation={{
+              fn: (value) => {
+                // Verifica se o valor está no formato de número inteiro ou decimal
+                if (!/^\d+(\.\d+)?$/.test(value)) {
+                  setLaunch((prev) => ({ ...prev, distance: "" }));
+
+                  return {
+                    message: "Informe um valor válido.",
+                  };
+                }
+
+                return null;
+              },
+              on: "blur",
+            }}
           />
           <Input
-            label="Peso"
-            value={launch.weight}
-            onChange={(e) =>
-              setLaunch((prev) => ({ ...prev, weight: e.target.value }))
-            }
-          />
-        </div>
-        <div className="w-2/5 flex flex-col">
-          <Input
-            label="Velocidade"
-            value={launch.speed}
-            onChange={(e) =>
-              setLaunch((prev) => ({ ...prev, speed: e.target.value }))
-            }
-          />
-          <Input
-            label="Pressão"
-            value={launch.pressure}
-            onChange={(e) =>
-              setLaunch((prev) => ({ ...prev, pressure: e.target.value }))
-            }
-          />
-          <Input
-            label="Ângulo"
-            value={launch.angle}
-            onChange={(e) =>
-              setLaunch((prev) => ({ ...prev, angle: e.target.value }))
-            }
-          />
-          <Input
-            label="Altitude"
+            id="alt"
+            label="Altitude (Metros)"
             value={launch.height}
             onChange={(e) =>
               setLaunch((prev) => ({ ...prev, height: e.target.value }))
             }
+            validation={{
+              fn: (value) => {
+                // Verifica se o valor está no formato de número inteiro ou decimal
+                if (!/^\d+(\.\d+)?$/.test(value)) {
+                  setLaunch((prev) => ({ ...prev, height: "" }));
+
+                  return {
+                    message: "Informe um valor válido.",
+                  };
+                }
+
+                return null;
+              },
+              on: "blur",
+            }}
+          />
+        </div>
+        <div className="w-2/5 flex flex-col">
+          <Input
+            id="vel"
+            label="Velocidade (m/s)"
+            value={launch.speed}
+            onChange={(e) =>
+              setLaunch((prev) => ({ ...prev, speed: e.target.value }))
+            }
+            validation={{
+              fn: (value) => {
+                // Verifica se o valor está no formato de número inteiro ou decimal
+                if (!/^\d+(\.\d+)?$/.test(value)) {
+                  setLaunch((prev) => ({ ...prev, speed: "" }));
+
+                  return {
+                    message: "Informe um valor válido.",
+                  };
+                }
+
+                return null;
+              },
+              on: "blur",
+            }}
           />
           <Input
-            label="Aceleração instantânea"
+            id="psi"
+            label="Pressão (PSI)"
+            value={launch.pressure}
+            onChange={(e) =>
+              setLaunch((prev) => ({ ...prev, pressure: e.target.value }))
+            }
+            validation={{
+              fn: (value) => {
+                // Verifica se o valor está no formato de número inteiro ou decimal
+                if (!/^\d+(\.\d+)?$/.test(value)) {
+                  setLaunch((prev) => ({ ...prev, pressure: "" }));
+
+                  return {
+                    message: "Informe um valor válido.",
+                  };
+                }
+
+                return null;
+              },
+              on: "blur",
+            }}
+          />
+          <Input
+            label="Aceleração (m/s²)"
             value={launch.instantAcceleration}
             onChange={(e) =>
               setLaunch((prev) => ({
@@ -203,25 +267,42 @@ export default function Lancamento() {
                 instantAcceleration: e.target.value,
               }))
             }
+            validation={{
+              fn: (value) => {
+                // Verifica se o valor está no formato de número inteiro ou decimal
+                if (!/^\d+(\.\d+)?$/.test(value)) {
+                  setLaunch((prev) => ({ ...prev, instantAcceleration: "" }));
+
+                  return {
+                    message: "Informe um valor válido.",
+                  };
+                }
+
+                return null;
+              },
+              on: "blur",
+            }}
           />
         </div>
       </div>
       <div className=" w-full flex flex-col justify-center items-center ">
-        <div className="  w-2/3 mb-4">
-          <Select
-            label="Foguetes"
-            options={
-              dataRocket?.map((rocket: any) => ({
-                value: rocket.id,
-                label: rocket.name,
-              })) ?? []
-            }
-            value={launch.rocketId || ""}
-            onChange={(rocketId) =>
-              setLaunch({ ...(launch as Launch), rocketId })
-            }
-          />
-        </div>
+        <Select
+          className="w-full p-2 -mt-4"
+          label="Foguete"
+          options={
+            dataRocket?.map((rocket: any) => ({
+              value: rocket.id,
+              label: rocket.name,
+            })) ?? []
+          }
+          value={launch.rocketId || ""}
+          onChange={(rocketId) =>
+            setLaunch({ ...(launch as Launch), rocketId })
+          }
+        />
+      </div>
+
+      <div className=" w-full flex flex-col justify-center items-center ">
         <div className="flex w-full items-center justify-center gap-8 mb-12">
           <Button variant="primary" onClick={handleSendLaunch}>
             {launch.id ? "Editar" : "Cadastrar"}

@@ -19,10 +19,18 @@ export default function Sensor() {
   let { data, refetch } = useQuery({
     queryKey: ["sensor"],
     staleTime: 300, // Refetch every 5 minutes
-    queryFn: () => axios.get(`https://pi1-foguete-backend.vercel.app/sensor`).then((res) => res.data),
+    queryFn: () =>
+      axios
+        .get(`https://pi1-foguete-backend.vercel.app/sensor`)
+        .then((res) => res.data),
   });
 
   const handleSendSensor = async () => {
+    if (!sensor.name || !sensor.function || !sensor.value) {
+      toast.error("Todos os campos devem ser preenchidos.");
+      return;
+    }
+
     if (!sensor.id) {
       const urlPostSensor = `https://pi1-foguete-backend.vercel.app/sensor`;
 
@@ -51,7 +59,7 @@ export default function Sensor() {
     }
 
     resetSensor();
-    await refetch()
+    await refetch();
   };
 
   const handleDeleteSensor = async (sensorId: string) => {
@@ -65,7 +73,7 @@ export default function Sensor() {
     }
 
     resetSensor();
-    await refetch()
+    await refetch();
   };
 
   const resetSensor = () => {
@@ -85,12 +93,6 @@ export default function Sensor() {
       <div>
         <div>
           <Input
-            label="ID"
-            value={sensor.id}
-            disabled={true}
-            className="text-gray-300"
-          />
-          <Input
             label="Nome"
             value={sensor.name}
             onChange={(e) =>
@@ -105,11 +107,27 @@ export default function Sensor() {
             }
           />
           <Input
-            label="Valor"
+            label="Valor (R$)"
             value={sensor.value}
             onChange={(e) =>
               setSensor((prev) => ({ ...prev, value: e.target.value }))
             }
+            validation={{
+              fn: (value) => {
+                // Verifica se o valor está no formato correto
+                if (!/^R?\$?\s?\d{1,3}(\.\d{3})*(\d{2})?$/.test(value)) {
+                  setSensor((prev) => ({ ...prev, value: "" }));
+
+                  return {
+                    message:
+                      "Informe um valor válido no formato R$ 999.999,99.",
+                  };
+                }
+
+                return null;
+              },
+              on: "blur",
+            }}
           />
           <div className="flex justify-around">
             <Button variant="primary" onClick={handleSendSensor}>
