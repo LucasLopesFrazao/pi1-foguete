@@ -139,7 +139,7 @@ export default function Foguete() {
             <Button variant="primary" onClick={handleSendRocket}>
               {rocket.id ? "Editar" : "Cadastrar"}
             </Button>
-            <Button variant="primary" onClick={resetRocket}>
+            <Button variant="danger" onClick={resetRocket}>
               Limpar
             </Button>
           </div>

@@ -71,7 +71,7 @@ export default function ListRocket({
                 >
                   Editar
                 </Button>
-                <Button variant="primary" onClick={() => onDelete(rocket.id)}>
+                <Button variant="danger" onClick={() => onDelete(rocket.id)}>
                   Excluir
                 </Button>
               </div>

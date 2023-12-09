@@ -35,7 +35,7 @@ export default function ListSensor({setSensor, data, onDelete}: Props) {
             render: (sensor: any) => (
               <div className="flex gap-2">
                 <Button variant="primary" onClick={()=>setSensor(sensor)}>Editar</Button>
-                <Button variant="primary" onClick={()=>onDelete(sensor.id)}>Excluir</Button>
+                <Button variant="danger" onClick={()=>onDelete(sensor.id)}>Excluir</Button>
               </div>
             ),
           },

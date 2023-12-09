@@ -134,7 +134,7 @@ export default function Sensor() {
               {sensor.id ? "Editar" : "Cadastrar"}
             </Button>
             <Button
-              variant="primary"
+              variant="danger"
               onClick={() =>
                 setSensor({
                   id: "",
