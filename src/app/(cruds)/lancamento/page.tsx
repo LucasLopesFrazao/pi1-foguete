@@ -416,7 +416,7 @@ export default function Lancamento() {
         <div className="mb-4">
           <label
             htmlFor="fileInput"
-            className="w-full cursor-pointer inline-block px-4 py-2 text-center text-gray-100 bg-indigo-500 hover:text-white hover:bg-indigo-600 hover:border-indigo-600 focus:bg-indigo-600 focus:border-indigo-600' rounded"
+            className="w-full cursor-pointer inline-block px-4 py-2 text-center border-green-600 text-gray-100 bg-green-600 hover:text-white hover:bg-green-700 hover:border-green-700 focus:bg-green-700 focus:border-green-700' rounded"
           >
             Clique aqui para selecionar um arquivo a ser enviado
           </label>
@@ -448,7 +448,7 @@ export default function Lancamento() {
             />
           </div>
           <div className="flex justify-center ">
-            <Button variant="primary" onClick={sendFile}>
+            <Button variant="primary" onClick={sendFile} disabled={!file?.name}>
               Enviar arquivo
             </Button>
           </div>
