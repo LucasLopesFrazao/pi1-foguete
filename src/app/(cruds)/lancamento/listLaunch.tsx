@@ -105,7 +105,7 @@ export default function ListLaunch({
               >
                 Editar
               </Button>
-              <Button variant="primary" onClick={() => onDelete(launch.id)}>
+              <Button variant="danger" onClick={() => onDelete(launch.id)}>
                 Excluir
               </Button>
             </div>

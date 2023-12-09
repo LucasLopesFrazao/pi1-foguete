@@ -8,10 +8,93 @@ import { useQuery } from "react-query";
 import { toast } from "react-toastify";
 import ListLaunch from "./listLaunch";
 import { Launch } from "@/app/types/crud";
+import Modal from "react-modal";
 
 import { formatDate } from "@/app/utils/functions";
+import { Label } from "recharts";
 
 export default function Lancamento() {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [file, setFile] = useState<File>();
+
+  const handleCloseModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const handleFileChange = (e: any) => {
+    setFile(e.target.files[0]);
+  };
+
+  const sendFile = async () => {
+    if (!launch.rocketId) {
+      toast.error("Selecione um foguete para concluir a ação.");
+      return;
+    }
+
+    if (file) {
+      const reader = new FileReader();
+
+      const processLine = async (line: string) => {
+        const regex =
+          /Aceleração Total: ([\d.]+) m\/s\^2 \| Velocidade: ([\d.]+) m\/s \| Altura: ([\d.]+) m \| Distância: ([\d.]+)/;
+        const match = line.match(regex);
+
+        if (match) {
+          const aceleracaoInstantanea = parseFloat(match[1]);
+          const velocidade = parseFloat(match[2]);
+          const altura = parseFloat(match[3]);
+          const distancia = parseFloat(match[4]);
+
+          const urlPostLaunch = `https://pi1-foguete-backend.vercel.app/launch`;
+
+          try {
+            await axios.post(urlPostLaunch, {
+              date: formatDate(),
+              waterVolume: 0,
+              distance: distancia,
+              weight: 0,
+              speed: velocidade,
+              pressure: 0,
+              angle: 45,
+              height: altura,
+              instantAcceleration: aceleracaoInstantanea,
+              rocketId: launch.rocketId,
+            });
+            toast.success("Lançamento cadastrado com sucesso.");
+            handleCloseModal();
+            await refetchLaunch();
+          } catch (e) {
+            toast.error("Erro ao cadastrar lançamento.");
+          }
+        }
+      };
+
+      // Utilize esta função dentro do reader.onload
+      reader.onload = async (e) => {
+        const text = e.target?.result;
+        const lines = text?.toString().split(/\r?\n/);
+
+        lines?.forEach((line) => {
+          processLine(line);
+        });
+      };
+
+      reader.readAsText(file);
+    }
+  };
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+    },
+    overlay: { zIndex: 1000 },
+  };
+
   const [launch, setLaunch] = useState<Launch>({
     id: "",
     date: "",
@@ -307,7 +390,10 @@ export default function Lancamento() {
           <Button variant="primary" onClick={handleSendLaunch}>
             {launch.id ? "Editar" : "Cadastrar"}
           </Button>
-          <Button variant="primary" onClick={resetLaunch}>
+          <Button variant="success" onClick={() => setModalIsOpen(true)}>
+            Carregar arquivo
+          </Button>
+          <Button variant="danger" onClick={resetLaunch}>
             Limpar
           </Button>
         </div>
@@ -322,6 +408,52 @@ export default function Lancamento() {
           />
         )}
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={handleCloseModal}
+        style={customStyles}
+      >
+        <div className="mb-4">
+          <label
+            htmlFor="fileInput"
+            className="w-full cursor-pointer inline-block px-4 py-2 text-center text-gray-100 bg-indigo-500 hover:text-white hover:bg-indigo-600 hover:border-indigo-600 focus:bg-indigo-600 focus:border-indigo-600' rounded"
+          >
+            Clique aqui para selecionar um arquivo a ser enviado
+          </label>
+
+          <input
+            type="file"
+            id="fileInput"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <p className="text-black flex justify-center mt-1">
+            Arquivo selecionado:{" "}
+            <span className="text-black ml-2">{file?.name}</span>
+          </p>
+          <div className=" w-full flex flex-col justify-center items-center mt-2">
+            <Select
+              className="w-full p-2 "
+              placeholder="Selecione um foguete.."
+              options={
+                dataRocket?.map((rocket: any) => ({
+                  value: rocket.id,
+                  label: rocket.name,
+                })) ?? []
+              }
+              value={launch.rocketId || ""}
+              onChange={(rocketId) =>
+                setLaunch({ ...(launch as Launch), rocketId })
+              }
+            />
+          </div>
+          <div className="flex justify-center ">
+            <Button variant="primary" onClick={sendFile}>
+              Enviar arquivo
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
