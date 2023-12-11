@@ -11,7 +11,6 @@ import { Launch } from "@/app/types/crud";
 import Modal from "react-modal";
 
 import { formatDate } from "@/app/utils/functions";
-import { Label } from "recharts";
 
 export default function Lancamento() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -21,8 +20,53 @@ export default function Lancamento() {
     setModalIsOpen(false);
   };
 
-  const handleFileChange = (e: any) => {
-    setFile(e.target.files[0]);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : undefined;
+
+    if (file) {
+      // Verifica se o arquivo é um .txt
+      if (file.name.endsWith(".txt") || file.type === "text/plain") {
+        setFile(file);
+      } else {
+        toast.error("Por favor, selecione um arquivo .txt.");
+        setFile(undefined); // Atualizado para undefined em vez de null
+      }
+    } else {
+      setFile(undefined); // Atualizado para undefined em vez de null
+    }
+  };
+
+  const processLine = async (line: string) => {
+    const regex =
+      /Aceleração Total: ([\d.]+) m\/s\^2 \| Velocidade: ([\d.]+) m\/s \| Altura: ([\d.]+) m \| Distância: ([\d.]+)/;
+    const match = line.match(regex);
+
+    if (match) {
+      const aceleracaoInstantanea = parseFloat(match[1]);
+      const velocidade = parseFloat(match[2]);
+      const altura = parseFloat(match[3]);
+      const distancia = parseFloat(match[4]);
+
+      const urlPostLaunch = `https://pi1-foguete-backend.vercel.app/launch`;
+
+      try {
+        await axios.post(urlPostLaunch, {
+          date: formatDate(),
+          waterVolume: 0,
+          distance: distancia,
+          weight: 0,
+          speed: velocidade,
+          pressure: 0,
+          angle: 45,
+          height: altura,
+          instantAcceleration: aceleracaoInstantanea,
+          rocketId: launch.rocketId,
+        });
+        await refetchLaunch();
+      } catch (e) {
+        toast.error("Erro ao cadastrar lançamento.");
+      }
+    }
   };
 
   const sendFile = async () => {
@@ -34,49 +78,40 @@ export default function Lancamento() {
     if (file) {
       const reader = new FileReader();
 
-      const processLine = async (line: string) => {
-        const regex =
-          /Aceleração Total: ([\d.]+) m\/s\^2 \| Velocidade: ([\d.]+) m\/s \| Altura: ([\d.]+) m \| Distância: ([\d.]+)/;
-        const match = line.match(regex);
-
-        if (match) {
-          const aceleracaoInstantanea = parseFloat(match[1]);
-          const velocidade = parseFloat(match[2]);
-          const altura = parseFloat(match[3]);
-          const distancia = parseFloat(match[4]);
-
-          const urlPostLaunch = `https://pi1-foguete-backend.vercel.app/launch`;
-
-          try {
-            await axios.post(urlPostLaunch, {
-              date: formatDate(),
-              waterVolume: 0,
-              distance: distancia,
-              weight: 0,
-              speed: velocidade,
-              pressure: 0,
-              angle: 45,
-              height: altura,
-              instantAcceleration: aceleracaoInstantanea,
-              rocketId: launch.rocketId,
-            });
-            toast.success("Lançamento cadastrado com sucesso.");
-            handleCloseModal();
-            await refetchLaunch();
-          } catch (e) {
-            toast.error("Erro ao cadastrar lançamento.");
-          }
-        }
-      };
-
-      // Utilize esta função dentro do reader.onload
       reader.onload = async (e) => {
         const text = e.target?.result;
         const lines = text?.toString().split(/\r?\n/);
 
+        let allLinesValid = true;
+
+        // Verifica cada linha e imprime aquelas que não seguem o padrão
+        lines?.forEach((line, index) => {
+          if (
+            !/Aceleração Total: \d+\.\d+ m\/s\^2 \| Velocidade: \d+\.\d+ m\/s \| Altura: \d+\.\d+ m \| Distância: \d+\.\d+/.test(
+              line
+            ) &&
+            line.trim() !== ""
+          ) {
+            console.error(`Linha ${index + 1} inválida: ${line}`);
+            allLinesValid = false;
+          }
+        });
+
+        if (!allLinesValid) {
+          toast.error(
+            "O arquivo escolhido contém linhas que não seguem o padrão necessário."
+          );
+          return;
+        }
+
+        // Se todas as linhas forem válidas, processa o arquivo
         lines?.forEach((line) => {
           processLine(line);
         });
+
+        toast.success("Lançamento cadastrado com sucesso.");
+        handleCloseModal();
+        await refetchLaunch();
       };
 
       reader.readAsText(file);
@@ -215,6 +250,7 @@ export default function Lancamento() {
       instantAcceleration: "",
       rocketId: "",
     });
+    setFile(undefined);
   };
 
   return (
@@ -447,9 +483,13 @@ export default function Lancamento() {
               }
             />
           </div>
-          <div className="flex justify-center ">
+          <div className="flex justify-center gap-2">
             <Button variant="primary" onClick={sendFile} disabled={!file?.name}>
               Enviar arquivo
+            </Button>
+
+            <Button variant="danger" onClick={resetLaunch}>
+              Limpar
             </Button>
           </div>
         </div>

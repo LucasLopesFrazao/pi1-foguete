@@ -100,6 +100,7 @@ export default function ListLaunch({
                     angle: launch.angle,
                     height: launch.height,
                     instantAcceleration: launch.instantAcceleration,
+                    rocketId: launch.rocketId
                   })
                 }
               >
