@@ -37,15 +37,13 @@ export default function Lancamento() {
   };
 
   const processLine = async (line: string) => {
-    const regex =
-      /Aceleração Total: ([\d.]+) m\/s\^2 \| Velocidade: ([\d.]+) m\/s \| Altura: ([\d.]+) m \| Distância: ([\d.]+)/;
+    const regex = /Latitude: ([-\d.]+) Longitude: ([-\d.]+) Data \(GMT\): (.+?) Horario \(GMT\): (.+?) Altitude \(cm\): ([-\d.]+) Velocidade \(m\/s\): ([-\d.]+) Aceleracao \(m\/s\^2\): ([-\d.]+)/;
     const match = line.match(regex);
 
     if (match) {
-      const aceleracaoInstantanea = parseFloat(match[1]);
-      const velocidade = parseFloat(match[2]);
-      const altura = parseFloat(match[3]);
-      const distancia = parseFloat(match[4]);
+        const altitude = Math.abs(parseFloat(match[5]));
+        const velocidade = Math.abs(parseFloat(match[6]));
+        const aceleracao = match[7] !== 'nan' && match[7] !== 'inf' ? Math.abs(parseFloat(match[7])) : null;
 
       const urlPostLaunch = `https://pi1-foguete-backend.vercel.app/launch`;
 
@@ -53,13 +51,13 @@ export default function Lancamento() {
         await axios.post(urlPostLaunch, {
           date: formatDate(),
           waterVolume: 0,
-          distance: distancia,
-          weight: 0,
+          distance: 0,
+          weight: 850,
           speed: velocidade,
           pressure: 0,
           angle: 45,
-          height: altura,
-          instantAcceleration: aceleracaoInstantanea,
+          height: altitude,
+          instantAcceleration: aceleracao,
           rocketId: launch.rocketId,
         });
         await refetchLaunch();
@@ -71,52 +69,46 @@ export default function Lancamento() {
 
   const sendFile = async () => {
     if (!launch.rocketId) {
-      toast.error("Selecione um foguete para concluir a ação.");
-      return;
+        toast.error("Selecione um foguete para concluir a ação.");
+        return;
     }
 
     if (file) {
-      const reader = new FileReader();
+        const reader = new FileReader();
 
-      reader.onload = async (e) => {
-        const text = e.target?.result;
-        const lines = text?.toString().split(/\r?\n/);
+        reader.onload = async (e) => {
+            const text = e.target?.result;
+            const lines = text?.toString().split(/\r?\n/);
 
-        let allLinesValid = true;
+            let invalidLineCount = 0;
 
-        // Verifica cada linha e imprime aquelas que não seguem o padrão
-        lines?.forEach((line, index) => {
-          if (
-            !/Aceleração Total: \d+\.\d+ m\/s\^2 \| Velocidade: \d+\.\d+ m\/s \| Altura: \d+\.\d+ m \| Distância: \d+\.\d+/.test(
-              line
-            ) &&
-            line.trim() !== ""
-          ) {
-            console.error(`Linha ${index + 1} inválida: ${line}`);
-            allLinesValid = false;
-          }
-        });
+            lines?.forEach((line, index) => {
+                // Utilizando o regex fornecido
+                const regex = /Latitude: ([-\d.]+) Longitude: ([-\d.]+) Data \(GMT\): (.+?) Horario \(GMT\): (.+?) Altitude \(cm\): ([-\d.]+) Velocidade \(m\/s\): ([-\d.]+) Aceleracao \(m\/s\^2\): ([-\d.]+)/;
+                const match = line.match(regex);
 
-        if (!allLinesValid) {
-          toast.error(
-            "O arquivo escolhido contém linhas que não seguem o padrão necessário."
-          );
-          return;
-        }
+                if (!match) {
+                    console.error(`Linha ${index + 1} inválida: ${line}`);
+                    invalidLineCount++;
+                } else {
+                    // Processa a linha válida
+                    processLine(line);
+                }
+            });
 
-        // Se todas as linhas forem válidas, processa o arquivo
-        lines?.forEach((line) => {
-          processLine(line);
-        });
+            if (invalidLineCount > 0) {
+                toast.warn(`${invalidLineCount} linha(s) inválida(s) foram ignoradas.`);
+            } else {
+                toast.success("Lançamento cadastrado com sucesso.");
+            }
 
-        toast.success("Lançamento cadastrado com sucesso.");
-        handleCloseModal();
-        await refetchLaunch();
-      };
+            handleCloseModal();
+            await refetchLaunch();
+        };
 
-      reader.readAsText(file);
+        reader.readAsText(file);
     }
-  };
+};
 
   const customStyles = {
     content: {
