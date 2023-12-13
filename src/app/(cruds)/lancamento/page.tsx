@@ -98,10 +98,10 @@ export default function Lancamento() {
 
             if (invalidLineCount > 0) {
                 toast.warn(`${invalidLineCount} linha(s) inválida(s) foram ignoradas.`);
-            } else {
-                toast.success("Lançamento cadastrado com sucesso.");
             }
-
+            
+            toast.success("Lançamentos válidos foram cadastrados com sucesso.");
+            
             handleCloseModal();
             await refetchLaunch();
         };
